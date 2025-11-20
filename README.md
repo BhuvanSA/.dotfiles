@@ -18,3 +18,5 @@ sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
 ```bash
 git clone https://github.com/BhuvanSA/.dotfiles.git ~/.dotfiles && sudo nix run nix-darwin --extra-experimental-features "nix-command flakes" -- switch --flake ~/.dotfiles#m1airb
 ```
+
+### 4.
