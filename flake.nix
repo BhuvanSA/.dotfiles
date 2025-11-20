@@ -4,7 +4,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    mac-app-util.url = "github:hraban/mac-app-util";
+    # mac-app-util.url = "github:hraban/mac-app-util";
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
@@ -23,7 +23,7 @@
       self,
       nix-darwin,
       nixpkgs,
-      mac-app-util,
+      # mac-app-util,
       nix-homebrew,
       homebrew-core,
       homebrew-cask,
@@ -107,7 +107,7 @@
               "google-chrome"
             ];
             masApps = {
-              "Dropover" = 1355679052;
+              # "Dropover" = 1355679052;
             };
             onActivation.cleanup = "zap";
             onActivation.autoUpdate = true;
@@ -143,7 +143,7 @@
       darwinConfigurations."m1airb" = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
-          mac-app-util.darwinModules.default
+          # mac-app-util.darwinModules.default
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
