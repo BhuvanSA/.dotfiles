@@ -42,6 +42,7 @@
             pkgs.biome
             pkgs.cloudflared
             pkgs.claude-code
+            pkgs.deno
             pkgs.fzf
             pkgs.gh
             pkgs.iterm2
