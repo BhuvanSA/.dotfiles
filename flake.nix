@@ -71,7 +71,12 @@
             ];
           };
 
-          programs.zsh.enable = true;
+          programs.zsh = {
+            enable = true;
+            interactiveShellInit = ''
+              source $HOME/.dotfiles/configs/zsh/.zshrc
+            '';
+          };
 
           # programs.zoxide = {
           #   enable = true;

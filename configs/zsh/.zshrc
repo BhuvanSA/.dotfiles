@@ -54,6 +54,6 @@ alias c='clear'
 eval "$(fzf --zsh)"
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-  eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
+  eval "$(oh-my-posh init zsh --config $HOME/.dotfiles/configs/ohmyposh/zen.toml)"
 fi
 . "/Users/bhuvansa/.deno/env"
