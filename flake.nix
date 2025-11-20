@@ -1,6 +1,5 @@
 {
   description = "Zenful nix-darwin system flake";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
@@ -40,15 +39,60 @@
           # $ nix-env -qaP | grep wget
           environment.systemPackages = [
             pkgs.appcleaner
-            pkgs.karabiner-elements
+            pkgs.biome
+            pkgs.cloudflared
+            pkgs.claude-code
+            pkgs.fzf
+            pkgs.iterm2
+            pkgs.bun
             pkgs.maccy
             pkgs.neovim
+            pkgs.nix-zsh-completions
             pkgs.nixfmt-rfc-style
             pkgs.nodejs_24
+            pkgs.oh-my-posh
+            pkgs.postman            
+            pkgs.rustup
+            pkgs.rustlings
+            pkgs.uv
+            pkgs.vscode
+            pkgs.vlc-bin
+            pkgs.yarn
           ];
 
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
+
+          # Font configuration
+          fonts = {
+            packages = [
+              pkgs.nerd-fonts.agave
+            ];
+          };
+
+          programs.zsh.enable = true;
+
+          # programs.zoxide = {
+          #   enable = true;
+          #   enableZshIntegration = true;
+          # };
+
+          # programs.zsh.plugins = [
+          #   {
+          #     name = "zsh-autosuggestions";
+          #     src = pkgs.zsh-autosuggestions;
+          #   }
+          #   {
+          #     name = "zsh-syntax-highlighting";
+          #     src = pkgs.zsh-syntax-highlighting;
+          #   }
+          # ];
+
+          # programs.zsh.initExtra = ''
+          #   if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+          #     eval "$(oh-my-posh init zsh)"
+          #   fi
+          # '';
 
           # Enable alternative shell support in nix-darwin.
           # programs.fish.enable = true;
@@ -58,11 +102,16 @@
               "mas"
             ];
             casks = [
+              "batfi"
+              "thebrowsercompany-dia"
+              "google-chrome"
             ];
             masApps = {
               "Dropover" = 1355679052;
             };
             onActivation.cleanup = "zap";
+            onActivation.autoUpdate = true;
+            onActivation.upgrade = true;
           };
 
           # Set Git commit hash for darwin-version.
@@ -71,6 +120,17 @@
           # Used for backwards compatibility, please read the changelog before changing.
           # $ darwin-rebuild changelog
           system.stateVersion = 6;
+
+          system.defaults = {
+            dock.autohide = true;
+            dock.autohide-delay = 0.0;
+            dock.autohide-time-modifier = 0.0;
+            dock.persistent-apps = [
+              "/Applications/Nix Apps/Visual Studio Code.app"
+            ];
+          };
+
+
 
           # The platform the configuration will be used on.
           nixpkgs.hostPlatform = "aarch64-darwin";
@@ -110,3 +170,4 @@
       darwinPackages = self.darwinConfigurations."m1airb".pkgs;
     };
 }
+
