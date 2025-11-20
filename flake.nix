@@ -43,6 +43,7 @@
             pkgs.cloudflared
             pkgs.claude-code
             pkgs.fzf
+            pkgs.gh
             pkgs.iterm2
             pkgs.bun
             pkgs.maccy
