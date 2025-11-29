@@ -42,6 +42,7 @@
             pkgs.biome
             pkgs.cloudflared
             pkgs.claude-code
+	    pkgs.cocoapods
             pkgs.deno
             pkgs.fzf
             pkgs.gh
@@ -54,6 +55,7 @@
             pkgs.nodejs_24
             pkgs.oh-my-posh
             pkgs.postman            
+            pkgs.pnpm
             pkgs.rustup
             pkgs.rustlings
             pkgs.uv
@@ -112,6 +114,7 @@
               "batfi"
               "thebrowsercompany-dia"
               "google-chrome"
+              "karabiner-elements"
             ];
             masApps = {
               # "Dropover" = 1355679052;
