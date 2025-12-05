@@ -42,8 +42,11 @@
             pkgs.biome
             pkgs.cloudflared
             pkgs.claude-code
-	    pkgs.cocoapods
+            pkgs.cocoapods
+            pkgs.rabbitmq-server
+            pkgs.rabbitmqadmin-ng
             pkgs.deno
+            pkgs.dioxus-cli
             pkgs.fzf
             pkgs.gh
             pkgs.iterm2
