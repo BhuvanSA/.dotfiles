@@ -51,6 +51,8 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 alias ls='ls --color'
 alias c='clear'
 
+export EDITOR="code --wait"
+
 eval "$(fzf --zsh)"
 
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then

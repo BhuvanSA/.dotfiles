@@ -40,32 +40,42 @@
           environment.systemPackages = [
             pkgs.appcleaner
             pkgs.biome
+            pkgs.bun
             pkgs.cloudflared
             pkgs.claude-code
             pkgs.cocoapods
             pkgs.rabbitmq-server
             pkgs.rabbitmqadmin-ng
+            pkgs.ruff
             pkgs.deno
             pkgs.dioxus-cli
             pkgs.fzf
             pkgs.gh
             pkgs.iterm2
-            pkgs.bun
+            pkgs.jq
             pkgs.maccy
             pkgs.neovim
+            pkgs.opencode
             pkgs.nix-zsh-completions
             pkgs.nixfmt-rfc-style
             pkgs.nodejs_24
             pkgs.oh-my-posh
-            pkgs.postman            
             pkgs.pnpm
             pkgs.rustup
             pkgs.rustlings
+            pkgs.supabase-cli
             pkgs.uv
             pkgs.vscode
             pkgs.vlc-bin
             pkgs.yarn
           ];
+
+	  environment.variables = {
+            RABBITMQ_BASE = ''$HOME/.rabbitmq'';
+            RABBITMQ_MNESIA_BASE = ''$HOME/.rabbitmq/mnesia'';
+            RABBITMQ_LOG_BASE = ''$HOME/.rabbitmq/log'';
+            RABBITMQ_PID_FILE = ''$HOME/.rabbitmq/rabbitmq.pid'';
+          };
 
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
@@ -118,6 +128,7 @@
               "thebrowsercompany-dia"
               "google-chrome"
               "karabiner-elements"
+              "requestly"
             ];
             masApps = {
               # "Dropover" = 1355679052;
@@ -138,9 +149,11 @@
             dock.autohide = true;
             dock.autohide-delay = 0.0;
             dock.autohide-time-modifier = 0.0;
+            dock.mru-spaces = false;
             dock.persistent-apps = [
               "/Applications/Nix Apps/Visual Studio Code.app"
             ];
+            NSGlobalDomain."AppleSpacesSwitchOnActivate" = false;
           };
 
 
