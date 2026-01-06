@@ -6,6 +6,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     # mac-app-util.url = "github:hraban/mac-app-util";
 
+    opencode.url = "github:anomalyco/opencode/production";
+
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     homebrew-core = {
@@ -23,6 +25,7 @@
       self,
       nix-darwin,
       nixpkgs,
+      opencode,
       # mac-app-util,
       nix-homebrew,
       homebrew-core,
@@ -55,7 +58,7 @@
             pkgs.jq
             pkgs.maccy
             pkgs.neovim
-            pkgs.opencode
+            opencode.packages.${pkgs.system}.default
             pkgs.nix-zsh-completions
             pkgs.nixfmt-rfc-style
             pkgs.nodejs_24
@@ -70,7 +73,7 @@
             pkgs.yarn
           ];
 
-	  environment.variables = {
+          environment.variables = {
             RABBITMQ_BASE = ''$HOME/.rabbitmq'';
             RABBITMQ_MNESIA_BASE = ''$HOME/.rabbitmq/mnesia'';
             RABBITMQ_LOG_BASE = ''$HOME/.rabbitmq/log'';
@@ -94,30 +97,6 @@
             '';
           };
 
-          # programs.zoxide = {
-          #   enable = true;
-          #   enableZshIntegration = true;
-          # };
-
-          # programs.zsh.plugins = [
-          #   {
-          #     name = "zsh-autosuggestions";
-          #     src = pkgs.zsh-autosuggestions;
-          #   }
-          #   {
-          #     name = "zsh-syntax-highlighting";
-          #     src = pkgs.zsh-syntax-highlighting;
-          #   }
-          # ];
-
-          # programs.zsh.initExtra = ''
-          #   if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-          #     eval "$(oh-my-posh init zsh)"
-          #   fi
-          # '';
-
-          # Enable alternative shell support in nix-darwin.
-          # programs.fish.enable = true;
           homebrew = {
             enable = true;
             brews = [
@@ -155,8 +134,6 @@
             ];
             NSGlobalDomain."AppleSpacesSwitchOnActivate" = false;
           };
-
-
 
           # The platform the configuration will be used on.
           nixpkgs.hostPlatform = "aarch64-darwin";
@@ -196,4 +173,3 @@
       darwinPackages = self.darwinConfigurations."m1airb".pkgs;
     };
 }
-

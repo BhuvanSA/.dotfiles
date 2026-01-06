@@ -51,7 +51,7 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 alias ls='ls --color'
 alias c='clear'
 
-export EDITOR="code --wait"
+export EDITOR="nvim"
 
 eval "$(fzf --zsh)"
 
