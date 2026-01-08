@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "tui": {
+    "scroll_speed": 1,
+    "scroll_acceleration": {
+      "enabled": true
+    },
+    "diff_style": "auto"
+  },
+  "theme":"nightowl",
+  "mcp": {
+    "supermemory": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.supermemory.ai/mcp"
+    },
+    "exa": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp"
+    }
+  }
+}

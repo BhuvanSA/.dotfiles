@@ -51,7 +51,13 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 alias ls='ls --color'
 alias c='clear'
 
+# Add local bin to PATH
+export PATH="$HOME/.dotfiles/bin:$PATH"
+
 export EDITOR="nvim"
+
+export OPENCODE_CONFIG="$HOME/.dotfiles/configs/opencode/opencode.jsonc"
+export COLORTERM=truecolor
 
 eval "$(fzf --zsh)"
 

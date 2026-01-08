@@ -6,7 +6,7 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     # mac-app-util.url = "github:hraban/mac-app-util";
 
-    opencode.url = "github:anomalyco/opencode/production";
+    opencode.url = "github:anomalyco/opencode/dev";
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
