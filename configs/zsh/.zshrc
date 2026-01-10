@@ -56,7 +56,7 @@ export PATH="$HOME/.dotfiles/bin:$PATH"
 
 export EDITOR="nvim"
 
-export OPENCODE_CONFIG="$HOME/.dotfiles/configs/opencode/opencode.jsonc"
+export OPENCODE_CONFIG_DIR="$HOME/.dotfiles/configs/opencode"
 export COLORTERM=truecolor
 
 eval "$(fzf --zsh)"
