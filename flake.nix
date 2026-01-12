@@ -41,6 +41,7 @@
           # List packages installed in system profile. To search by name, run:
           # $ nix-env -qaP | grep wget
           environment.systemPackages = [
+            pkgs.antigravity
             pkgs.appcleaner
             pkgs.biome
             pkgs.bun
@@ -101,6 +102,7 @@
             enable = true;
             brews = [
               "mas"
+              "promptfoo"
             ];
             casks = [
               "batfi"
