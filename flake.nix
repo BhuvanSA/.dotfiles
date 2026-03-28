@@ -6,7 +6,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     # mac-app-util.url = "github:hraban/mac-app-util";
 
-    opencode.url = "github:anomalyco/opencode/dev";
+    claude-code.url = "github:sadjow/claude-code-nix";
+    claude-code.inputs.nixpkgs.follows = "nixpkgs";
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
@@ -25,7 +26,7 @@
       self,
       nix-darwin,
       nixpkgs,
-      opencode,
+      claude-code,
       # mac-app-util,
       nix-homebrew,
       homebrew-core,
@@ -43,42 +44,49 @@
           environment.systemPackages = [
             pkgs.antigravity
             pkgs.appcleaner
+            (pkgs.azure-cli.withExtensions [
+              (pkgs.azure-cli-extensions.containerapp.overridePythonAttrs (old: {
+                pythonRelaxDeps = [ "kubernetes" ];
+              }))
+            ])
             pkgs.biome
             pkgs.bun
             pkgs.cloudflared
-            pkgs.claude-code
+            claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
             pkgs.cocoapods
             pkgs.rabbitmq-server
             pkgs.rabbitmqadmin-ng
             pkgs.ruff
-            pkgs.deno
             pkgs.dioxus-cli
             pkgs.fzf
             pkgs.gh
+            pkgs.ghostty-bin
             pkgs.iterm2
             pkgs.jq
+            # pkgs.kubectl
+            # pkgs.minikube
             pkgs.maccy
             pkgs.neovim
-            opencode.packages.${pkgs.system}.default
             pkgs.nix-zsh-completions
-            pkgs.nixfmt-rfc-style
+            pkgs.nixfmt
             pkgs.nodejs_24
             pkgs.oh-my-posh
             pkgs.pnpm
+            pkgs.postgresql_18
             pkgs.rustup
             pkgs.rustlings
-            pkgs.supabase-cli
+            pkgs.tree
+            pkgs.hoppscotch
             pkgs.uv
-            pkgs.vscode
             pkgs.vlc-bin
             pkgs.yarn
           ];
 
           environment.variables = {
-            RABBITMQ_BASE = ''$HOME/.rabbitmq'';
-            RABBITMQ_MNESIA_BASE = ''$HOME/.rabbitmq/mnesia'';
-            RABBITMQ_LOG_BASE = ''$HOME/.rabbitmq/log'';
-            RABBITMQ_PID_FILE = ''$HOME/.rabbitmq/rabbitmq.pid'';
+            RABBITMQ_BASE = "$HOME/.rabbitmq";
+            RABBITMQ_MNESIA_BASE = "$HOME/.rabbitmq/mnesia";
+            RABBITMQ_LOG_BASE = "$HOME/.rabbitmq/log";
+            RABBITMQ_PID_FILE = "$HOME/.rabbitmq/rabbitmq.pid";
           };
 
           # Necessary for using flakes on this system.
@@ -102,11 +110,11 @@
             enable = true;
             brews = [
               "mas"
-              "promptfoo"
+              "mole"
             ];
             casks = [
               "batfi"
-              "thebrowsercompany-dia"
+              "orbstack"
               "google-chrome"
               "karabiner-elements"
               "requestly"
@@ -135,6 +143,10 @@
               "/Applications/Nix Apps/Visual Studio Code.app"
             ];
             NSGlobalDomain."AppleSpacesSwitchOnActivate" = false;
+
+            menuExtraClock = {
+              ShowSeconds = true;
+            };
           };
 
           # The platform the configuration will be used on.
