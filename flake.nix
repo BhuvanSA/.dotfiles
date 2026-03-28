@@ -140,7 +140,7 @@
             dock.autohide-time-modifier = 0.0;
             dock.mru-spaces = false;
             dock.persistent-apps = [
-              "/Applications/Antigravity.app"
+              "/Applications/Nix Apps/Antigravity.app"
             ];
             NSGlobalDomain."AppleSpacesSwitchOnActivate" = false;
 
