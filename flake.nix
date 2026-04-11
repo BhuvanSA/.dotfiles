@@ -54,6 +54,7 @@
             pkgs.cloudflared
             claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
             pkgs.cocoapods
+            pkgs.ffmpeg-headless
             pkgs.rabbitmq-server
             pkgs.rabbitmqadmin-ng
             pkgs.ruff
@@ -63,6 +64,7 @@
             pkgs.ghostty-bin
             pkgs.iterm2
             pkgs.jq
+            pkgs.codex
             # pkgs.kubectl
             # pkgs.minikube
             pkgs.maccy
@@ -71,6 +73,7 @@
             pkgs.nixfmt
             pkgs.nodejs_24
             pkgs.oh-my-posh
+            pkgs.pango
             pkgs.pnpm
             pkgs.postgresql_18
             pkgs.rustup
@@ -91,6 +94,19 @@
 
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
+
+          # Garbage collection — weekly on Sunday at 3 AM, keep last 7 days
+          nix.gc = {
+            automatic = true;
+            interval = { Weekday = 0; Hour = 3; Minute = 0; };
+            options = "--delete-older-than 7d";
+          };
+
+          # Store optimisation — deduplicate identical files weekly
+          nix.optimise = {
+            automatic = true;
+            interval = { Weekday = 0; Hour = 4; Minute = 0; };
+          };
 
           # Font configuration
           fonts = {
