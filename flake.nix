@@ -95,17 +95,17 @@
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
 
-          # Garbage collection — weekly on Sunday at 3 AM, keep last 7 days
+          # Garbage collection — weekly on Saturday at 3 AM, keep last 7 days
           nix.gc = {
             automatic = true;
-            interval = { Weekday = 0; Hour = 3; Minute = 0; };
+            interval = { Weekday = 6; Hour = 3; Minute = 0; };
             options = "--delete-older-than 7d";
           };
 
           # Store optimisation — deduplicate identical files weekly
           nix.optimise = {
             automatic = true;
-            interval = { Weekday = 0; Hour = 4; Minute = 0; };
+            interval = { Weekday = 6; Hour = 4; Minute = 0; };
           };
 
           # Font configuration
