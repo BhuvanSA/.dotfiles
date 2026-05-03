@@ -9,6 +9,9 @@
     claude-code.url = "github:sadjow/claude-code-nix";
     claude-code.inputs.nixpkgs.follows = "nixpkgs";
 
+    opencode-nix.url = "github:nklmilojevic/opencode-nix";
+    opencode-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     homebrew-core = {
@@ -27,6 +30,7 @@
       nix-darwin,
       nixpkgs,
       claude-code,
+      opencode-nix,
       # mac-app-util,
       nix-homebrew,
       homebrew-core,
@@ -42,7 +46,6 @@
           # List packages installed in system profile. To search by name, run:
           # $ nix-env -qaP | grep wget
           environment.systemPackages = [
-            pkgs.antigravity
             pkgs.appcleaner
             (pkgs.azure-cli.withExtensions [
               (pkgs.azure-cli-extensions.containerapp.overridePythonAttrs (old: {
@@ -53,6 +56,7 @@
             pkgs.bun
             pkgs.cloudflared
             claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
+            opencode-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
             pkgs.cocoapods
             pkgs.ffmpeg-headless
             pkgs.rabbitmq-server
@@ -83,6 +87,7 @@
             pkgs.uv
             pkgs.vlc-bin
             pkgs.yarn
+            pkgs.zed-editor
           ];
 
           environment.variables = {
@@ -94,6 +99,12 @@
 
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
+
+          # Binary cache for opencode-nix pre-built binaries
+          nix.settings.substituters = [ "https://opencode-nix-cache.cachix.org" ];
+          nix.settings.trusted-public-keys = [
+            "opencode-nix-cache.cachix.org-1:Wq9yk7XD0pg457w4D5HV2OJVj++tl70tfzde1SrfYX8="
+          ];
 
           # Garbage collection — weekly on Saturday at 3 AM, keep last 7 days
           nix.gc = {
@@ -156,7 +167,7 @@
             dock.autohide-time-modifier = 0.0;
             dock.mru-spaces = false;
             dock.persistent-apps = [
-              "/Applications/Nix Apps/Antigravity.app"
+              "/Applications/Zed.app"
             ];
             NSGlobalDomain."AppleSpacesSwitchOnActivate" = false;
 
