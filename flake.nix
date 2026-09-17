@@ -1,7 +1,7 @@
 {
   description = "Zenful nix-darwin system flake";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     # mac-app-util.url = "github:hraban/mac-app-util";
@@ -11,6 +11,13 @@
 
     opencode-nix.url = "github:nklmilojevic/opencode-nix";
     opencode-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Pinned to the last nixpkgs rev Hydra actually built zed-editor for on
+    # aarch64-darwin (2026-09-11, zed 1.19.2). Newer nixos-unstable revs change
+    # zed's derivation hash without a darwin build in cache.nixos.org, which
+    # turns every rebuild into a multi-hour local Rust compile. Drop this input
+    # and go back to `pkgs.zed-editor` once darwin builds are cached again.
+    nixpkgs-zed.url = "github:NixOS/nixpkgs/c320b9607c14419236aa9151a3d3a73e23bbd090";
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
@@ -29,6 +36,7 @@
       self,
       nix-darwin,
       nixpkgs,
+      nixpkgs-zed,
       claude-code,
       opencode-nix,
       # mac-app-util,
@@ -46,13 +54,18 @@
           # List packages installed in system profile. To search by name, run:
           # $ nix-env -qaP | grep wget
           environment.systemPackages = [
-            pkgs.appcleaner
-            (pkgs.azure-cli.withExtensions [
+            pkgs.actionlint
+            # `az self-test` (installCheckPhase) crashes with SIGABRT during
+            # Python 3.14 interpreter shutdown on the macOS 27 beta — the check
+            # passes functionally, only the exit aborts. The extension override
+            # forces a local build (not cached), so we hit it. Skip the check.
+            ((pkgs.azure-cli.withExtensions [
               (pkgs.azure-cli-extensions.containerapp.overridePythonAttrs (old: {
                 pythonRelaxDeps = [ "kubernetes" ];
               }))
-            ])
-            pkgs.biome
+            ]).overrideAttrs (_: {
+              doInstallCheck = false;
+            }))
             pkgs.bun
             pkgs.cloudflared
             claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -61,14 +74,17 @@
             pkgs.ffmpeg-headless
             pkgs.rabbitmq-server
             pkgs.rabbitmqadmin-ng
+            (pkgs.callPackage ./pkgs/remindctl.nix { })
             pkgs.ruff
             pkgs.dioxus-cli
+            pkgs.doctl
             pkgs.fzf
             pkgs.gh
+            pkgs.google-cloud-sdk
+            pkgs.gws
             pkgs.ghostty-bin
             pkgs.iterm2
             pkgs.jq
-            pkgs.codex
             # pkgs.kubectl
             # pkgs.minikube
             pkgs.maccy
@@ -80,17 +96,22 @@
             pkgs.pango
             pkgs.pnpm
             pkgs.postgresql_18
+            pkgs.pi-coding-agent
             pkgs.rustup
             pkgs.rustlings
+            pkgs.smartmontools
             pkgs.tree
+            pkgs.twilio-cli
             pkgs.hoppscotch
             pkgs.uv
             pkgs.vlc-bin
             pkgs.yarn
-            pkgs.zed-editor
+            nixpkgs-zed.legacyPackages.${pkgs.stdenv.hostPlatform.system}.zed-editor
           ];
 
           environment.variables = {
+            EDITOR = "zeditor --wait";
+            VISUAL = "zeditor --wait";
             RABBITMQ_BASE = "$HOME/.rabbitmq";
             RABBITMQ_MNESIA_BASE = "$HOME/.rabbitmq/mnesia";
             RABBITMQ_LOG_BASE = "$HOME/.rabbitmq/log";
@@ -100,10 +121,14 @@
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
 
-          # Binary cache for opencode-nix pre-built binaries
-          nix.settings.substituters = [ "https://opencode-nix-cache.cachix.org" ];
+          # Extra binary caches
+          nix.settings.substituters = [
+            "https://opencode-nix-cache.cachix.org"
+            "https://nix-community.cachix.org"
+          ];
           nix.settings.trusted-public-keys = [
             "opencode-nix-cache.cachix.org-1:Wq9yk7XD0pg457w4D5HV2OJVj++tl70tfzde1SrfYX8="
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
           ];
 
           # Garbage collection — weekly on Saturday at 3 AM, keep last 7 days
@@ -117,6 +142,24 @@
           nix.optimise = {
             automatic = true;
             interval = { Weekday = 6; Hour = 4; Minute = 0; };
+          };
+
+          # Daily auto-update: nix flake update + darwin-rebuild switch
+          # Runs at 09:00; RunAtLoad catches up if the Mac was asleep.
+          launchd.daemons.dotfiles-auto-update = {
+            script = ''
+              export PATH=/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin
+              cd /Users/bhuvansa/.dotfiles || exit 1
+              /run/current-system/sw/bin/nix flake update
+              chown bhuvansa:staff flake.lock
+              /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/bhuvansa/.dotfiles#m1airb
+            '';
+            serviceConfig = {
+              StartCalendarInterval = [ { Hour = 9; Minute = 0; } ];
+              RunAtLoad = false;
+              StandardOutPath = "/var/log/dotfiles-auto-update.log";
+              StandardErrorPath = "/var/log/dotfiles-auto-update.log";
+            };
           };
 
           # Font configuration

@@ -54,7 +54,14 @@ alias c='clear'
 # Add local bin to PATH
 export PATH="$HOME/.dotfiles/bin:$PATH"
 
-export EDITOR="nvim"
+# Cargo-installed binaries (e.g. claude-worklog)
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# Local secrets (untracked) — Jira/Slack tokens for claude-worklog, etc.
+[ -f "$HOME/.config/claude-worklog/secrets.env" ] && source "$HOME/.config/claude-worklog/secrets.env"
+
+export EDITOR="zeditor --wait"
+export VISUAL="zeditor --wait"
 
 export COLORTERM=truecolor
 
