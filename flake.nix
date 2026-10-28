@@ -51,6 +51,24 @@
         {
           # Allow unfree packages, such as obsidian
           nixpkgs.config.allowUnfree = true;
+
+          # python fabric 3.2.3 pins invoke<3 and is marked broken now that
+          # nixpkgs ships invoke 3 (https://github.com/fabric/fabric/issues/2376).
+          # azure-cli depends on it. Only fabric's `fab` CLI host-parameterization
+          # tests fail, so relax the pin and skip checks. Drop once fixed upstream.
+          nixpkgs.overlays = [
+            (final: prev: {
+              pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+                (pyfinal: pyprev: {
+                  fabric = pyprev.fabric.overridePythonAttrs (old: {
+                    pythonRelaxDeps = (old.pythonRelaxDeps or [ ]) ++ [ "invoke" ];
+                    doCheck = false;
+                    meta = old.meta // { broken = false; };
+                  });
+                })
+              ];
+            })
+          ];
           # List packages installed in system profile. To search by name, run:
           # $ nix-env -qaP | grep wget
           environment.systemPackages = [
@@ -105,6 +123,7 @@
             pkgs.hoppscotch
             pkgs.uv
             pkgs.vlc-bin
+            pkgs.websocat
             pkgs.yarn
             nixpkgs-zed.legacyPackages.${pkgs.stdenv.hostPlatform.system}.zed-editor
           ];
@@ -117,6 +136,9 @@
             RABBITMQ_LOG_BASE = "$HOME/.rabbitmq/log";
             RABBITMQ_PID_FILE = "$HOME/.rabbitmq/rabbitmq.pid";
           };
+
+          # Touch ID for sudo (writes /etc/pam.d/sudo_local, survives macOS updates)
+          security.pam.services.sudo_local.touchIdAuth = true;
 
           # Necessary for using flakes on this system.
           nix.settings.experimental-features = "nix-command flakes";
@@ -145,10 +167,16 @@
           };
 
           # Daily auto-update: nix flake update + darwin-rebuild switch
-          # Runs at 09:00; RunAtLoad catches up if the Mac was asleep.
+          # Runs at 09:00; launchd fires a missed run once on wake if the Mac
+          # was asleep (not if it was powered off).
           launchd.daemons.dotfiles-auto-update = {
             script = ''
               export PATH=/run/current-system/sw/bin:/usr/bin:/bin:/usr/sbin:/sbin
+              # The daemon runs as root, and libgit2 refuses to open a repo owned
+              # by another user unless SUDO_UID matches the owner. Mimic an
+              # interactive `sudo darwin-rebuild` so the git+file flake input opens.
+              export SUDO_USER=bhuvansa
+              export SUDO_UID=$(id -u bhuvansa)
               cd /Users/bhuvansa/.dotfiles || exit 1
               /run/current-system/sw/bin/nix flake update
               chown bhuvansa:staff flake.lock
